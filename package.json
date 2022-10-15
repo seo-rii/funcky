@@ -1,6 +1,6 @@
 {
   "name": "funcky",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Functional programming with express",
   "main": "build/module/index.js",
   "types": "build/module/index.d.ts",
@@ -9,7 +9,7 @@
     "deploy": "npm run build && npm publish --access public"
   },
   "bin": {
-    "bedrock": "build/runner.js"
+    "funcky": "build/runner.js"
   },
   "private": false,
   "repository": {
