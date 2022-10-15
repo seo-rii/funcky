@@ -2,7 +2,7 @@ import express from 'express';
 import ws from 'express-ws';
 import prepare from "./express/prepare";
 import handler, {acl, generator, justRun} from "./express/handler";
-import _bedrock from './config'
+import _funcky from './config'
 import log from "./util/log";
 import authRouter, {auth} from './util/jwt'
 import {ACLHandler, Handler, PostHandler, RouteCallback, Router} from "./types/router";
@@ -86,7 +86,7 @@ export default function ({port, name, cb, config}: {
         app.get('/', (req, res) => {
             res.send(`${name} v${config.version}.${config.commitCount} (${config.commitHash})
             <br/>
-            By <a href="https://github.com/HancomAC/bedrock">Bedrock</a> v${_bedrock.version}.${_bedrock.commitCount} (<a href="https://github.com/HancomAC/bedrock/commit/${_bedrock.commitHash}">${_bedrock.commitHash}</a>)`);
+            By <a href="https://github.com/seo-rii/funcky">funcky</a> v${_funcky.version}.${_funcky.commitCount} (<a href="https://github.com/seo-rii/funcky/commit/${_funcky.commitHash}">${_funcky.commitHash}</a>)`);
         })
 
         app.use(handler(async () => {
