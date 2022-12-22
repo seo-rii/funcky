@@ -14,10 +14,10 @@
     "moduleResolution": "node",
     "paths": {
       "$types/*": [
-        "types/*"
+        "module/types/*"
       ],
       "$util/*": [
-        "util/*"
+        "module/util/*"
       ]
     }
   },
