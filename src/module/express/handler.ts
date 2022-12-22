@@ -1,7 +1,7 @@
 import express from "express";
-import {ResponseError, ResponseSuccess} from "../types/response";
-import {error} from "../util/log";
-import {ACLHandler, Handler, PostHandler, Request} from "../types/router";
+import {error} from "$util/log";
+import {ResponseError, ResponseSuccess} from "$types/response";
+import {ACLHandler, Handler, PostHandler, Request} from "$types/router";
 
 export default function (...f: Handler[]): express.RequestHandler {
     f = f.filter(x => x);
@@ -40,16 +40,19 @@ export function acl(aclChecker?: ACLHandler, handler?: Handler, checkDefault = t
     }
 }
 
-export function generator(f: Handler | express.RequestHandler) {
-    let data = null;
-    const g = async (req, res, next) => {
-        if (data) return data;
-        data = await f(req, res, next);
-        return data;
+export function generator(f: Handler | express.RequestHandler, h: (f: Handler) => express.RequestHandler = x => x): express.RequestHandler {
+    return (req, res, next) => {
+        let data = undefined;
+        const g = async (req, res, next) => {
+            if (data !== undefined) return data;
+            data = await f(req, res, next);
+            return data;
+        }
+        g.refresh = async () => {
+            data = undefined;
+            return false;
+        }
+
+        h(g)(req, res, next);
     }
-    g.refresh = async () => {
-        data = null;
-        return false;
-    }
-    return g;
 }
