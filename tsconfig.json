@@ -11,15 +11,7 @@
     ],
     "baseUrl": "./src/module",
     "declaration": true,
-    "moduleResolution": "node",
-    "paths": {
-      "$types/*": [
-        "module/types/*"
-      ],
-      "$util/*": [
-        "module/util/*"
-      ]
-    }
+    "moduleResolution": "node"
   },
   "exclude": [
     "node_modules",

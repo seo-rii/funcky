@@ -3,9 +3,9 @@ import ws from 'express-ws';
 import prepare from "./express/prepare";
 import handler, {acl, generator, justRun} from "./express/handler";
 import _funcky from './config'
-import log from "$util/log";
-import authRouter, {auth} from '$util/jwt'
-import {ACLHandler, Handler, PostHandler, RouteCallback, Router} from "$types/router";
+import log from "./util/log";
+import authRouter, {auth} from './util/jwt'
+import {ACLHandler, Handler, PostHandler, RouteCallback, Router} from "./types/router";
 
 interface AppConfig extends RouteCallback {
     app: express.Application

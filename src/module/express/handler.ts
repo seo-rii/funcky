@@ -1,7 +1,7 @@
 import express from "express";
-import {error} from "$util/log";
-import {ResponseError, ResponseSuccess} from "$types/response";
-import {ACLHandler, Handler, PostHandler, Request} from "$types/router";
+import {error} from "../util/log";
+import {ResponseError, ResponseSuccess} from "../types/response";
+import {ACLHandler, Handler, PostHandler, Request} from "../types/router";
 
 export default function (...f: Handler[]): express.RequestHandler {
     f = f.filter(x => x);
