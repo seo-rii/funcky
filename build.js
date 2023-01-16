@@ -1,8 +1,11 @@
-const childProcess = require('child_process');
-const packageJson = require('./package.json');
-const path = require('path');
-const fs = require("fs");
-const args = require('args-parser')(process.argv);
+import * as childProcess from 'child_process';
+import * as fs from "fs";
+import * as path from "path";
+import * as esbuild from 'esbuild';
+import argParser from 'args-parser';
+
+const args = argParser(process.argv);
+const packageJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
 
 const getOutput = (command, options) => {
     try {
@@ -55,14 +58,15 @@ function copyFolderSync(from, to) {
 }
 
 fs.writeFileSync('src/module/config.ts', `export default ${config}`)
-childProcess.execSync('tsc')
+//childProcess.execSync('tsc --module es2015')
 
-require('esbuild').build({
+esbuild.build({
     entryPoints: ['./src/runner.ts'],
     outfile: 'build/runner.js',
     bundle: true,
     plugins: [makeAllPackagesExternalPlugin],
     platform: 'node',
+    format: 'esm',
 }).then(() => {
     console.log('✔ Build successful.')
 })

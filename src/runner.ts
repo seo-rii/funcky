@@ -1,20 +1,44 @@
 import * as childProcess from 'child_process';
+import * as fs from "fs";
 import * as path from "path";
+import * as esbuild from 'esbuild';
+import argParser from 'args-parser';
 
-const packageJson = require(path.join(process.cwd(), 'package.json'));
+const args = argParser(process.argv);
+const packageJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
+
+const runServerPlugin = {
+    name: 'run-server',
+    setup(build) {
+        let server;
+        build.onEnd(result => {
+            if (result.errors.length) {
+                console.error('⚠ Watch build failed. See errors above.');
+                for (const error of result.errors) {
+                    console.error(error.text);
+                }
+            } else {
+                for (let i = 0; i < process.stdout.rows; i++) console.log('');
+                process.stdout.cursorTo(0, 0);
+                console.log('✔ Build successful.');
+                if (server) {
+                    server.kill();
+                    console.log('⚡ Retarting server...');
+                } else console.log('⚡ Starting server...');
+                server = childProcess.spawn('node', [...(args['path-resolver'] ? ['--experimental-specifier-resolution=node'] : []), path.join(process.cwd(), args.dist || 'build/index.mjs')], {stdio: 'inherit'});
+            }
+        });
+    },
+}
 
 const makeAllPackagesExternalPlugin = {
     name: 'make-all-packages-external',
     setup(build) {
-        build.onResolve({ filter: /[A-Z]:\/*/ }, async () => ({ external: false }));
-        build.onResolve({ filter: /\$\/*/ }, async () => ({ external: false }));
+        build.onResolve({filter: /[A-Z]:\/*/}, async () => ({external: false}));
+        build.onResolve({filter: /\$\/*/}, async () => ({external: false}));
         build.onResolve({filter: /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/}, args => ({path: args.path, external: true}))
     },
 }
-
-const args = require('args-parser')(process.argv);
-
-let builded;
 
 const config = JSON.stringify({
     'version': packageJson.version,
@@ -23,38 +47,33 @@ const config = JSON.stringify({
     'buildDate': new Date().toISOString(),
     'port': args.port || (args.dev ? 3006 : 80),
     'dev': args.dev,
-})
+});
 
-require('esbuild').build({
+const opt: any = {
     entryPoints: [path.join(process.cwd(), args.entry)],
-    outfile: path.join(process.cwd(), args.dist),
+    outfile: path.join(process.cwd(), args.dist || 'build/index.mjs'),
     bundle: true,
-    plugins: [makeAllPackagesExternalPlugin],
+    plugins: args.dev ? [runServerPlugin, makeAllPackagesExternalPlugin] : [makeAllPackagesExternalPlugin],
     platform: 'node',
     define: {config},
     tsconfig: path.join(process.cwd(), 'tsconfig.json'),
-    ...(args.dev ? {
-        watch: {
-            onRebuild(error) {
-                if (error) console.error('⚠ watch build failed:', error)
-                else {
-                    for (let i = 0; i < process.stdout.rows; i++) console.log('');
-                    process.stdout.cursorTo(0, 0);
-                    console.log('✔ Build successful.')
-                    console.log('⚡ Restarting server...')
-                    if (builded) builded.kill();
-                    builded = childProcess.spawn('node', [path.join(process.cwd(), args.dist)], {stdio: 'inherit'});
-                }
-            },
+    format: 'esm',
+};
+
+if (!args.dev) esbuild.build(opt).then(result => {
+    if (result.errors.length) {
+        console.error('⚠ Build failed. See errors above.');
+        for (const error of result.errors) {
+            console.error(error.text);
         }
-    } : {}),
-}).then(() => {
-    if (args.dev) {
-        for (let i = 0; i < process.stdout.rows; i++) console.log('');
-        process.stdout.cursorTo(0, 0);
-        console.log('⚡ Starting server...')
-        builded = childProcess.spawn('node', [path.join(process.cwd(), args.dist)], {stdio: 'inherit'});
-    } else {
-        console.log('✔ Build successful.')
-    }
-})
+    } else console.log('✔ Build successful.');
+}); else esbuild.context(opt).then(async (ctx) => {
+    if (!args.dev) {
+        const result = await ctx.rebuild();
+        if (result.errors.length > 0) {
+            console.error('Build failed.');
+            for (const error of result.errors) console.error(error.text);
+            process.exit(1);
+        }
+    } else await ctx.watch();
+});
