@@ -20,9 +20,8 @@ export default function (app: express.Application, config: any) {
         }
     }))
     app.use(express.json({limit: "1000mb"}));
-    app.use(express.urlencoded({extended: true}));
+    app.use(express.urlencoded({limit: "1000mb", extended: true}));
     app.use((error, req, res, next) => res.status(500).send({error: error.message, code: 500}));
-    app.use(express.urlencoded({extended: true}));
     app.use(cookieParser());
     app.use(compression());
 }
