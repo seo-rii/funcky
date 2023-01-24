@@ -7,7 +7,7 @@ export type Handler = (req: Request, res?: express.Response, next?: express.Next
 export type PostHandler = (ctx: any, req: Request, res?: express.Response, next?: express.NextFunction) => (ResponseInternal<any>)
 export type HandlerRegistrator = (path: string, handler: Handler, options?: { auth?: any, acl?: ACLHandler, post?: PostHandler }) => any
 export type ACLHandler = ((req: Request, data: any) => Promise<boolean>) | false
-export type Router = (wsInstance: ws.Instance) => Promise<express.Router>
+export type Router = (wsInstance: ws.Instance, config: any) => Promise<express.Router>
 
 export interface RouteCallback {
     get: HandlerRegistrator,

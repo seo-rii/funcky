@@ -41,13 +41,13 @@ export default function ({port, name, cb, config}: {
                             acl: _acl,
                             post: _post
                         }: { auth?: any, acl?: ACLHandler, post?: PostHandler } = {}) => {
-                            app[method](path, generator(f, g => handler(auth(!!(_auth)), acl(_acl, g), auth(_auth), justRun(_post, g))));
+                            app[method](path, generator(f, g => handler(config, auth(!!(_auth)), acl(_acl, g), auth(_auth), justRun(_post, g))));
                         }
                     };
                 }, {})),
 
                 r: async (path: string, f: Router) => {
-                    app.use(path, await f(instance));
+                    app.use(path, await f(instance, config));
                 },
                 ws: app.ws?.bind?.(app) as typeof app.ws,
                 use: app.use.bind(app)
@@ -60,7 +60,7 @@ export default function ({port, name, cb, config}: {
             By <a href="https://github.com/seo-rii/funcky">funcky</a> v${_funcky.version}.${_funcky.commitCount} (<a href="https://github.com/seo-rii/funcky/commit/${_funcky.commitHash}">${_funcky.commitHash}</a>)`);
         })
 
-        app.use(handler(async () => {
+        app.use(handler(config, async () => {
             return {
                 error: 'Not Found',
                 code: 404

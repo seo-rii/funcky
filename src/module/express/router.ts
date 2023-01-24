@@ -9,7 +9,7 @@ interface RouterConfig extends RouteCallback {
 }
 
 export default function (cb?: (data: RouterConfig) => any, options?: RouterOptions, _auth?: any, _acl?: ACLHandler): Router {
-    return async (wsInstance: ws.Instance) => {
+    return async (wsInstance: ws.Instance, config: any) => {
         const router = express.Router(options)
         wsInstance?.applyTo?.(router)
 
@@ -22,13 +22,13 @@ export default function (cb?: (data: RouterConfig) => any, options?: RouterOptio
                         acl: __acl,
                         post: __post
                     }: { auth?: any, acl?: ACLHandler, post?: PostHandler } = {}) => {
-                        router[method](path, generator(f, g => handler(auth(!!(_auth || __auth)), acl(_acl, g), acl(__acl, g), auth(_auth), auth(__auth), justRun(__post, g))));
+                        router[method](path, generator(f, g => handler(config, auth(!!(_auth || __auth)), acl(_acl, g), acl(__acl, g), auth(_auth), auth(__auth), justRun(__post, g))));
                     }
                 };
             }, {})),
 
             r: async (path: string, f: Router) => {
-                router.use(path, await f(wsInstance));
+                router.use(path, await f(wsInstance, config));
             },
         }
 
@@ -43,7 +43,7 @@ export default function (cb?: (data: RouterConfig) => any, options?: RouterOptio
                 router,
                 ...defaultRouter,
                 use: (...args) => {
-                    router.use(args[0], ...args.slice(1).map(r => generator(r, g => handler(auth(!!_auth), acl(_acl, g, false), auth(_auth), g))));
+                    router.use(args[0], ...args.slice(1).map(r => generator(r, g => handler(config, auth(!!_auth), acl(_acl, g, false), auth(_auth), g))));
                 },
                 ws: router.ws?.bind?.(router)
             })

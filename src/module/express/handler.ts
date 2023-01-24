@@ -2,8 +2,9 @@ import express from "express";
 import {error} from "../util/log";
 import {ResponseError, ResponseSuccess} from "../types/response";
 import {ACLHandler, Handler, PostHandler, Request} from "../types/router";
+import bson from 'bson-ext';
 
-export default function (...f: Handler[]): express.RequestHandler {
+export default function (config: any, ...f: Handler[]): express.RequestHandler {
     f = f.filter(x => x);
     return async (req, res, next) => {
         for (let i of f) {
@@ -13,7 +14,8 @@ export default function (...f: Handler[]): express.RequestHandler {
                 if (data === false) continue;
                 if (data === true) return;
                 if ((data as ResponseError<any>).error) res.status((data as ResponseError<any>).code || 500);
-                await res.json(data);
+                if (!config.bson) await res.json(data);
+                else await res.send(bson.serialize(data));
                 return;
             } catch (e) {
                 error(e)
