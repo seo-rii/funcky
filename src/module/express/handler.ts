@@ -14,8 +14,10 @@ export default function (config: any, ...f: Handler[]): express.RequestHandler {
                 if (data === false) continue;
                 if (data === true) return;
                 if ((data as ResponseError<any>).error) res.status((data as ResponseError<any>).code || 500);
-                if (!config.bson) await res.json(data);
-                else await res.send(bson.serialize(data));
+                if (config.bson && req.accepts('application/bson')) {
+                    res.set('Content-Type', 'application/bson');
+                    await res.send(bson.serialize(data));
+                } else await res.json(data);
                 return;
             } catch (e) {
                 error(e)
