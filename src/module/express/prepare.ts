@@ -5,6 +5,7 @@ import compression from "compression";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import {logm} from "../util/log";
+import bson from 'bson-ext';
 
 export default function (app: express.Application, config: any) {
     app.use(cors({
@@ -19,9 +20,15 @@ export default function (app: express.Application, config: any) {
             }
         }
     }))
-    app.use(express.json({limit: "200mb"}));
-    app.use(express.urlencoded({limit: "200mb", extended: true}));
+    app.use(express.raw({type: 'application/bson', limit: '10mb'}))
+    app.use(express.json({limit: "10mb"}));
+    app.use(express.urlencoded({limit: "10mb", extended: true}));
     app.use((error, req, res, next) => res.status(500).send({error: error.message, code: 500}));
     app.use(cookieParser());
     app.use(compression());
+    app.use((req, res, next) => {
+        if (Buffer.isBuffer(req.body)) {
+            req.body = bson.deserialize(req.body);
+        }
+    });
 }
