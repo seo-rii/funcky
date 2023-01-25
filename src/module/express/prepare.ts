@@ -25,7 +25,7 @@ export default function (app: express.Application, config: any) {
     app.use(express.urlencoded({limit: "10mb", extended: true}));
     app.use((error, req, res, next) => res.status(500).send({error: error.message, code: 500}));
     app.use(cookieParser());
-    app.use(compression(() => true));
+    app.use(compression({filter: () => true}));
     app.use((req, res, next) => {
         if (Buffer.isBuffer(req.body)) {
             req.body = bson.deserialize(req.body);
