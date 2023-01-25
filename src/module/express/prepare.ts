@@ -30,5 +30,6 @@ export default function (app: express.Application, config: any) {
         if (Buffer.isBuffer(req.body)) {
             req.body = bson.deserialize(req.body);
         }
+        next();
     });
 }
