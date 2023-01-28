@@ -20,8 +20,11 @@ export default function (config: any, ...f: Handler[]): express.RequestHandler {
                 } else await res.json(data);
                 return;
             } catch (e) {
-                error(e)
-                await res.status(500).json({error: e.message, code: 500});
+                error(e);
+                if (config.bson && req.accepts('application/bson')) {
+                    res.set('Content-Type', 'application/bson');
+                    await res.send(bson.serialize({error: e.message, code: 500}));
+                } else await res.json({error: e.message, code: 500});
                 return;
             }
         }
