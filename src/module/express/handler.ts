@@ -21,6 +21,7 @@ export default function (config: any, ...f: Handler[]): express.RequestHandler {
                 return;
             } catch (e) {
                 error(e);
+                res.status(500);
                 if (config.bson && req.accepts('application/bson')) {
                     res.set('Content-Type', 'application/bson');
                     await res.send(bson.serialize({error: e.message, code: 500}));
