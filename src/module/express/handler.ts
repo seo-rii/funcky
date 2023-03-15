@@ -14,18 +14,20 @@ export default function (config: any, ...f: Handler[]): express.RequestHandler {
                 if (data === false) continue;
                 if (data === true) return;
                 if ((data as ResponseError<any>).error) res.status((data as ResponseError<any>).code || 500);
-                if (config.bson && req.accepts('application/bson')) {
+                if (req.accepts('application/json')) await res.json(data);
+                else if (config.bson && req.accepts('application/bson')) {
                     res.set('Content-Type', 'application/bson');
                     await res.send(bson.serialize(data));
-                } else await res.json(data);
+                } else res.send('Unsupported media type');
                 return;
             } catch (e) {
                 error(e);
                 res.status(500);
-                if (config.bson && req.accepts('application/bson')) {
+                if (req.accepts('application/json')) await res.json({error: e.message, code: 500});
+                else if (config.bson && req.accepts('application/bson')) {
                     res.set('Content-Type', 'application/bson');
                     await res.send(bson.serialize({error: e.message, code: 500}));
-                } else await res.json({error: e.message, code: 500});
+                } else res.send('Unsupported media type');
                 return;
             }
         }
