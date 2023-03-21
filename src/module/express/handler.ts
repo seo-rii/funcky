@@ -2,7 +2,7 @@ import express from "express";
 import {error} from "../util/log";
 import {ResponseError, ResponseSuccess} from "../types/response";
 import {ACLHandler, Handler, PostHandler, Request} from "../types/router";
-import bson from 'bson';
+import {BSON} from 'bson';
 
 export default function (config: any, ...f: Handler[]): express.RequestHandler {
     f = f.filter(x => x);
@@ -17,7 +17,7 @@ export default function (config: any, ...f: Handler[]): express.RequestHandler {
                 if (req.accepts('application/json')) await res.json(data);
                 else if (config.bson && req.accepts('application/bson')) {
                     res.set('Content-Type', 'application/bson');
-                    await res.send(bson.serialize(data));
+                    await res.send(BSON.serialize(data));
                 } else res.send('Unsupported media type');
                 return;
             } catch (e) {
@@ -26,7 +26,7 @@ export default function (config: any, ...f: Handler[]): express.RequestHandler {
                 if (req.accepts('application/json')) await res.json({error: e.message, code: 500});
                 else if (config.bson && req.accepts('application/bson')) {
                     res.set('Content-Type', 'application/bson');
-                    await res.send(bson.serialize({error: e.message, code: 500}));
+                    await res.send(BSON.serialize({error: e.message, code: 500}));
                 } else res.send('Unsupported media type');
                 return;
             }
