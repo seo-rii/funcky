@@ -5,7 +5,7 @@ import compression from "compression";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import {logm} from "../util/log";
-import bson from 'bson-ext';
+import bson from 'bson';
 
 export default function (app: express.Application, config: any) {
     app.use(cors({
