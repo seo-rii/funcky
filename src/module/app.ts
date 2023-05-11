@@ -1,5 +1,5 @@
-import express from 'express';
-import ws from 'express-ws';
+import express, {type Application} from 'express';
+import ws, {type Instance} from 'express-ws';
 import prepare from "./express/prepare";
 import handler, {acl, generator, justRun} from "./express/handler";
 import _funcky from './config'
@@ -8,7 +8,7 @@ import authRouter, {auth} from './util/jwt'
 import {ACLHandler, Handler, PostHandler, RouteCallback, Router} from "./types/router";
 
 interface AppConfig extends RouteCallback {
-    app: express.Application
+    app: Application
     config: any
 }
 
@@ -23,10 +23,12 @@ export default function ({port, name, cb, config}: {
         }
         if (!config) config = {} as any
 
-        const instance = ws(express()), app = instance.app;
+        const useWs = config.ws !== false;
+        const instance = useWs ? ws(express()) : {app: express()}, app = instance.app;
 
         prepare(app, config);
         app.use(authRouter);
+        express().use('', () => null);
 
         if (cb) {
             const defaultMethods = ['get', 'post', 'put', 'delete', 'patch'];
@@ -47,14 +49,14 @@ export default function ({port, name, cb, config}: {
                 }, {})),
 
                 r: async (path: string, f: Router) => {
-                    app.use(path, await f(instance, config));
+                    (<Application>app).use(path, await f(useWs ? (<Instance>instance) : null, config));
                 },
-                ws: app.ws?.bind?.(app) as typeof app.ws,
+                ws: useWs ? (<Instance['app']>app).ws?.bind?.(app) as Instance['app']['ws'] : null,
                 use: app.use.bind(app)
             })
         }
 
-        app.get('/', (req, res) => {
+        (<Application>app).get('/', (req, res) => {
             res.send(`${name} v${config.version}.${config.commitCount} (${config.commitHash})
             <br/>
             By <a href="https://github.com/seo-rii/funcky">funcky</a> v${_funcky.version}.${_funcky.commitCount} (<a href="https://github.com/seo-rii/funcky/commit/${_funcky.commitHash}">${_funcky.commitHash}</a>)`);
