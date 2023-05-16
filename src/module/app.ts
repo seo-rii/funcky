@@ -1,11 +1,11 @@
 import express, {type Application} from 'express';
 import ws, {type Instance} from 'express-ws';
-import prepare from "./express/prepare";
-import handler, {acl, generator, justRun} from "./express/handler";
-import _funcky from './config'
-import log from "./util/log";
-import authRouter, {auth} from './util/jwt'
-import {ACLHandler, Handler, PostHandler, RouteCallback, Router} from "./types/router";
+import prepare from "./express/prepare.js";
+import handler, {acl, generator, justRun} from "./express/handler.js";
+import _funcky from './config.js'
+import log from "./util/log.js";
+import authRouter, {auth} from './util/jwt.js'
+import {ACLHandler, Handler, PostHandler, RouteCallback, Router} from "./types/router.js";
 
 interface AppConfig extends RouteCallback {
     app: Application

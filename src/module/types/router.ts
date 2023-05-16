@@ -1,5 +1,5 @@
 import express from "express";
-import {ResponseInternal} from "./response";
+import {ResponseInternal} from "./response.js";
 import ws from 'express-ws';
 
 export type Request = express.Request & { auth: any, req_ip: string };

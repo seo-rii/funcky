@@ -1,8 +1,8 @@
 import express, {RouterOptions} from "express";
-import handler, {acl, generator, justRun} from "./handler";
+import handler, {acl, generator, justRun} from "./handler.js";
 import ws from 'express-ws';
-import {ACLHandler, Handler, PostHandler, RouteCallback, Router} from "../types/router";
-import {auth} from "../util/jwt";
+import {ACLHandler, Handler, PostHandler, RouteCallback, Router} from "../types/router.js";
+import {auth} from "../util/jwt.js";
 
 interface RouterConfig extends RouteCallback {
     router: express.Router

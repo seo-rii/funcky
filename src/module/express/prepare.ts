@@ -4,7 +4,7 @@ import helmet from "helmet";
 import compression from "compression";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import {logm} from "../util/log";
+import {logm} from "../util/log.js";
 import {BSON} from 'bson';
 
 export default function (app: express.Application, config: any) {

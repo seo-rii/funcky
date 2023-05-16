@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import express from "express";
-import {Handler} from "../types/router";
+import {Handler} from "../types/router.js";
 
 const secretKey = process.env.jwt || 'secretKey';
 
