@@ -58,7 +58,7 @@ function copyFolderSync(from, to) {
 }
 
 fs.writeFileSync('src/module/config.ts', `export default ${config}`)
-childProcess.execSync('tsc --module es2015')
+childProcess.execSync('tsc --module es2022')
 
 esbuild.build({
     entryPoints: ['./src/runner.ts'],
