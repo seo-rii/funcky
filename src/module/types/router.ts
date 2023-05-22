@@ -11,7 +11,7 @@ export type HandlerRegistrator<T = {}> = (path: string, handler: Handler<T>, opt
     post?: PostHandler
 }) => any
 export type ACLHandler = ((req: Request, data: any) => Promise<boolean>) | false
-export type RouterHandler<T = {}> = (req: express.Request & Partial<T>, res: express.Response, next: express.NextFunction) => any
+export type RouterHandler<T = {}> = (req: express.Request & Partial<T>, res?: express.Response, next?: express.NextFunction) => any
 export type Router = (wsInstance: ws.Instance | null, config: any) => Promise<express.Router>
 
 export interface RouteCallback<T = {}> {
@@ -21,7 +21,7 @@ export interface RouteCallback<T = {}> {
     del: HandlerRegistrator<T>,
     delete: HandlerRegistrator<T>,
     patch: HandlerRegistrator<T>,
-    use: RouterHandler<T>,
+    use: (path: string, f: RouterHandler<T>, ...any) => any,
     ws: ws.WebsocketMethod<any>,
     r: (path: string, f: Router) => Promise<any>,
     ir: <U = {}>(path: string, f: (data: RouterConfig<T & U>) => any, options?: RouterOptions, _auth?: any, _acl?: ACLHandler) => Promise<any>,
