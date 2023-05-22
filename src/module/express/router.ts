@@ -1,14 +1,10 @@
 import express, {RouterOptions} from "express";
 import handler, {acl, generator, justRun} from "./handler.js";
 import ws from 'express-ws';
-import {ACLHandler, Handler, PostHandler, RouteCallback, Router} from "../types/router.js";
+import {ACLHandler, Handler, PostHandler, RouteCallback, Router, RouterConfig} from "../types/router.js";
 import {auth} from "../util/jwt.js";
 
-interface RouterConfig<T = {}> extends RouteCallback<T> {
-    router: express.Router
-}
-
-export default function <T = {}>(cb?: (data: RouterConfig<T>) => any, options?: RouterOptions, _auth?: any, _acl?: ACLHandler): Router {
+export default function Router<T = {}>(cb?: (data: RouterConfig<T>) => any, options?: RouterOptions, _auth?: any, _acl?: ACLHandler): Router {
     return async (wsInstance: ws.Instance, config: any) => {
         const router = express.Router(options)
         wsInstance?.applyTo?.(router)
@@ -30,6 +26,10 @@ export default function <T = {}>(cb?: (data: RouterConfig<T>) => any, options?: 
             r: async (path: string, f: Router) => {
                 router.use(path, await f(wsInstance, config));
             },
+
+            ir: async <U = {}>(path: string, f: (data: RouterConfig<T & U>) => any, options?: RouterOptions, _auth?: any, _acl?: ACLHandler) => {
+                router.use(path, await (await Router(f, options, _auth, _acl))(wsInstance, config));
+            }
         }
 
         if (cb) {

@@ -1,4 +1,4 @@
-import express from "express";
+import express, {RouterOptions} from "express";
 import {ResponseInternal} from "./response.js";
 import ws from 'express-ws';
 
@@ -22,4 +22,9 @@ export interface RouteCallback<T = {}> {
     use: express.IRouterHandler<any> & express.IRouterMatcher<any>,
     ws: ws.WebsocketMethod<any>,
     r: (path: string, f: Router) => Promise<any>,
+    ir: (path: string, f: (data: RouterConfig<T>) => any, options?: RouterOptions, _auth?: any, _acl?: ACLHandler) => Promise<any>,
+}
+
+export interface RouterConfig<T = {}> extends RouteCallback<T> {
+    router: express.Router
 }
