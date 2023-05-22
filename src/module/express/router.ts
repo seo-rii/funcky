@@ -32,6 +32,8 @@ export default function Router<T = {}>(cb?: (data: RouterConfig<T>) => any, opti
             }
         }
 
+        defaultRouter.del = defaultRouter.delete;
+
         if (cb) {
             if (!_auth) await cb({
                 router,

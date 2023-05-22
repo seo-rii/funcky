@@ -17,6 +17,7 @@ export interface RouteCallback<T = {}> {
     get: HandlerRegistrator<T>,
     post: HandlerRegistrator<T>,
     put: HandlerRegistrator<T>,
+    del: HandlerRegistrator<T>,
     delete: HandlerRegistrator<T>,
     patch: HandlerRegistrator<T>,
     use: express.IRouterHandler<any> & express.IRouterMatcher<any>,
