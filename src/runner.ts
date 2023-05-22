@@ -27,7 +27,7 @@ const runServerPlugin = {
                 } else console.log('⚡ Starting server...');
                 server = childProcess.spawn('node', [...(args['path-resolver'] ? ['--experimental-specifier-resolution=node'] : []), path.join(process.cwd(), args.dist || 'build/index.mjs')], {
                     stdio: 'inherit',
-                    env: {['env-path']: args['env-path']}
+                    env: {...process.env, ['env-path']: args['env-path']}
                 });
             }
         });
