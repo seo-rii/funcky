@@ -1,15 +1,7 @@
-import express, {RouterOptions} from "express";
+import express, {type RouterOptions} from "express";
 import handler, {acl, generator, justRun} from "./handler.js";
 import ws from 'express-ws';
-import {
-    ACLHandler,
-    Handler,
-    PostHandler,
-    RouteCallback,
-    Router,
-    RouterConfig,
-    RouterHandler
-} from "../types/router.js";
+import type {ACLHandler, Handler, PostHandler, RouteCallback, Router, RouterConfig} from "../types/router.js";
 import {auth} from "../util/jwt.js";
 
 export default function Router<T = {}>(cb?: (data: RouterConfig<T>) => any, options?: RouterOptions, _auth?: any, _acl?: ACLHandler): Router {

@@ -1,5 +1,5 @@
-import express, {RouterOptions} from "express";
-import {ResponseInternal} from "./response.js";
+import express, {type RouterOptions} from "express";
+import type {ResponseInternal} from "./response.js";
 import ws from 'express-ws';
 
 export type Request<T = {}> = express.Request & { auth: any, req_ip: string } & Partial<T>;
@@ -11,7 +11,7 @@ export type HandlerRegistrator<T = {}> = (path: string, handler: Handler<T>, opt
     post?: PostHandler
 }) => any
 export type ACLHandler = ((req: Request, data: any) => Promise<boolean>) | false
-export type RouterHandler<T = {}> = (req: express.Request & Partial<T>, res?: express.Response, next?: express.NextFunction) => any
+export type RouterHandler<T = {}> = (req: Request<T>, res?: express.Response, next?: express.NextFunction) => any
 export type Router = (wsInstance: ws.Instance | null, config: any) => Promise<express.Router>
 
 export interface RouteCallback<T = {}> {

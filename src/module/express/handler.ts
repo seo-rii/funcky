@@ -1,7 +1,7 @@
 import express from "express";
 import {error} from "../util/log.js";
-import {ResponseError, ResponseSuccess} from "../types/response.js";
-import {ACLHandler, Handler, PostHandler, Request} from "../types/router.js";
+import type {ResponseError, ResponseSuccess} from "../types/response.js";
+import type {ACLHandler, Handler, PostHandler, Request} from "../types/router.js";
 import {BSON} from 'bson';
 
 export default function (config: any, ...f: Handler[]): express.RequestHandler {
