@@ -4,11 +4,11 @@ import ws from 'express-ws';
 import {ACLHandler, Handler, PostHandler, RouteCallback, Router} from "../types/router.js";
 import {auth} from "../util/jwt.js";
 
-interface RouterConfig extends RouteCallback {
+interface RouterConfig<T = {}> extends RouteCallback<T> {
     router: express.Router
 }
 
-export default function (cb?: (data: RouterConfig) => any, options?: RouterOptions, _auth?: any, _acl?: ACLHandler): Router {
+export default function <T = {}>(cb?: (data: RouterConfig<T>) => any, options?: RouterOptions, _auth?: any, _acl?: ACLHandler): Router {
     return async (wsInstance: ws.Instance, config: any) => {
         const router = express.Router(options)
         wsInstance?.applyTo?.(router)
