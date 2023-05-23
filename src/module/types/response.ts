@@ -1,6 +1,6 @@
 type Response<T> = Promise<ResponseSuccess<T> | ResponseError<T>>;
 
-export type ResponseInternal<T> = Promise<ResponseSuccess<T> | ResponseError<T> | boolean>;
+export type ResponseInternal<T> = Promise<ResponseSuccess<T> | ResponseError<T> | ResponseRedirect | boolean>;
 
 export type ResponseSuccess<T> = {
     data: T
@@ -12,6 +12,11 @@ export type ResponseError<T> = {
     code: number
     owner?: number
     data?: T
+}
+
+export type ResponseRedirect = {
+    redirect: string
+    code?: number
 }
 
 export default Response;

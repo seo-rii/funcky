@@ -1,6 +1,6 @@
 import express from "express";
 import {error} from "../util/log.js";
-import type {ResponseError, ResponseSuccess} from "../types/response.js";
+import type {ResponseError, ResponseSuccess, ResponseRedirect} from "../types/response.js";
 import type {ACLHandler, Handler, PostHandler, Request} from "../types/router.js";
 import {BSON} from 'bson';
 
@@ -14,7 +14,8 @@ export default function (config: any, ...f: Handler[]): express.RequestHandler {
                 if (data === false) continue;
                 if (data === true) return;
                 if ((data as ResponseError<any>).error) res.status((data as ResponseError<any>).code || 500);
-                if (req.accepts('application/json')) await res.json(data);
+                if ((data as ResponseRedirect).redirect) res.redirect((data as ResponseRedirect).redirect);
+                else if (req.accepts('application/json')) await res.json(data);
                 else if (config.bson && req.accepts('application/bson')) {
                     res.set('Content-Type', 'application/bson');
                     await res.send(BSON.serialize(data));
