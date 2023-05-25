@@ -21,6 +21,7 @@ export interface RouteCallback<T = {}> {
     del: HandlerRegistrator<T>,
     delete: HandlerRegistrator<T>,
     patch: HandlerRegistrator<T>,
+    u: HandlerRegistrator<T>,
     use: (path: string, f: RouterHandler<T>, ...any) => any,
     ws: ws.WebsocketMethod<any>,
     r: (path: string, f: Router) => Promise<any>,

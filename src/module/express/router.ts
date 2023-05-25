@@ -9,7 +9,7 @@ export default function Router<T = {}>(cb?: (data: RouterConfig<T>) => any, opti
         const router = express.Router({mergeParams: true, ...(options || {})})
         wsInstance?.applyTo?.(router)
 
-        const defaultMethods = ['get', 'post', 'put', 'delete', 'patch'];
+        const defaultMethods = ['get', 'post', 'put', 'delete', 'patch', 'use'];
         const defaultRouter: RouteCallback = {
             ...(<RouteCallback>defaultMethods.reduce((r, method) => {
                 return {
@@ -33,6 +33,7 @@ export default function Router<T = {}>(cb?: (data: RouterConfig<T>) => any, opti
         }
 
         defaultRouter.del = defaultRouter.delete;
+        defaultRouter.u = defaultRouter.use;
 
         if (cb) {
             if (!_auth) await cb({
