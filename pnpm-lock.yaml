@@ -51,6 +51,9 @@ devDependencies:
   '@types/node':
     specifier: ^20.2.3
     version: 20.2.3
+  extensionless:
+    specifier: ^1.4.5
+    version: 1.4.5
   typescript:
     specifier: ^5.0.4
     version: 5.0.4
@@ -598,6 +601,10 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: false
+
+  /extensionless@1.4.5:
+    resolution: {integrity: sha512-aDQYk6bksjzxoqpBYDYSGh3WaOk12Bn1rYwnOdv+z/Ys+4jFEU33XgvoXF5rJEho9myS5T0uMm337ejPkHjXTw==}
+    dev: true
 
   /finalhandler@1.2.0:
     resolution: {integrity: sha512-5uXcUVftlQMFnWC9qu/svkWv3GTd2PfUhK/3PLkYNAe7FbqJMt3515HaxE6eRL74GdsriiwujiawdaB1BpEISg==}

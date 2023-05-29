@@ -1,6 +1,6 @@
 {
   "name": "funcky",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "Functional programming with express",
   "main": "build/module/index.js",
   "types": "build/module/index.d.ts",
@@ -10,7 +10,8 @@
     "deploy": "npm run build && npm publish --access public"
   },
   "bin": {
-    "funcky": "build/runner.js"
+    "funcky": "build/runner.js",
+    "funck": "node --experimental-loader=extensionless"
   },
   "private": false,
   "repository": {
@@ -42,6 +43,15 @@
     "@types/express": "^4.17.17",
     "@types/express-ws": "^3.0.1",
     "@types/node": "^20.2.3",
+    "extensionless": "^1.4.5",
     "typescript": "^5.0.4"
+  },
+  "extensionless": {
+    "lookFor": [
+      "js",
+      "mjs",
+      "cjs",
+      "json"
+    ]
   }
 }
