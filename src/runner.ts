@@ -37,8 +37,10 @@ const runServerPlugin = {
 const makeAllPackagesExternalPlugin = {
     name: 'make-all-packages-external',
     setup(build) {
-        build.onResolve({filter: /[A-Z]:\/*/}, async () => ({external: false}));
-        build.onResolve({filter: /\$\/*/}, async () => ({external: false}));
+        const internal = (args.internal || '').split(',');
+        build.onResolve({filter: /(.*?)/}, args => internal.some(i => args.path.startsWith(i)) ? {external: false} : undefined);
+        build.onResolve({filter: /[A-Z]:\/*/}, () => ({external: false}));
+        build.onResolve({filter: /\$\/*/}, () => ({external: false}));
         build.onResolve({filter: /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/}, args => ({path: args.path, external: true}))
     },
 }
