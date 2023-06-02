@@ -31,22 +31,25 @@ export default function ({port, name, cb, config}: {
         express().use('', () => null);
 
         if (cb) {
-            const defaultMethods = ['get', 'post', 'put', 'delete', 'patch'];
+            const defaultMethods = ['get', 'post', 'put', 'delete', 'patch', 'use'];
+            const defaultRouter = (<RouteCallback>defaultMethods.reduce((r, method) => {
+                return {
+                    ...r, [method]: (path: string, f: Handler, {
+                        auth: _auth,
+                        acl: _acl,
+                        post: _post
+                    }: { auth?: any, acl?: ACLHandler, post?: PostHandler } = {}) => {
+                        app[method](path, generator(f, g => handler(config, auth(!!(_auth)), acl(_acl, g), auth(_auth), justRun(_post, g))));
+                    }
+                };
+            }, {}));
+            defaultRouter.del = defaultRouter.delete;
+            defaultRouter.u = defaultRouter.use;
 
             await cb({
                 app,
                 config,
-                ...(<RouteCallback>defaultMethods.reduce((r, method) => {
-                    return {
-                        ...r, [method]: (path: string, f: Handler, {
-                            auth: _auth,
-                            acl: _acl,
-                            post: _post
-                        }: { auth?: any, acl?: ACLHandler, post?: PostHandler } = {}) => {
-                            app[method](path, generator(f, g => handler(config, auth(!!(_auth)), acl(_acl, g), auth(_auth), justRun(_post, g))));
-                        }
-                    };
-                }, {})),
+                ...defaultRouter,
 
                 r: async (path: string, f: Router) => {
                     (<Application>app).use(path, await f(useWs ? (<Instance>instance) : null, config));
