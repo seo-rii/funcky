@@ -1,6 +1,6 @@
 type Response<T> = Promise<ResponseSuccess<T> | ResponseError<T>>;
 
-export type ResponseInternal<T> = Promise<ResponseSuccess<T> | ResponseError<T> | ResponseRedirect | boolean>;
+export type ResponseInternal<T> = Promise<ResponseSuccess<T> | ResponseError<T> | ResponseRedirect | boolean | null | undefined | void>;
 
 export type ResponseSuccess<T> = {
     data: T
