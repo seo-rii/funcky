@@ -22,7 +22,7 @@ export default function (config: any, ...f: Handler[]): express.RequestHandler {
                 else if (req.accepts('application/json')) await res.json(data);
                 else if (config.bson && req.accepts('application/bson')) {
                     res.set('Content-Type', 'application/bson');
-                    await res.send(BSON.serialize(data));
+                    await res.send(BSON.serialize(<any>data));
                 } else res.send('Unsupported media type');
                 return;
             } catch (e) {
