@@ -13,6 +13,10 @@ export default function (config: any, ...f: Handler[]): express.RequestHandler {
                 const data = await i(req as Request, res, next);
                 if (data === false) continue;
                 if (data === true) return;
+                if (data === null || data === undefined) {
+                    next();
+                    return;
+                }
                 if ((data as ResponseError<any>).error) res.status((data as ResponseError<any>).code || 500);
                 if ((data as ResponseRedirect).redirect) res.redirect((data as ResponseRedirect).redirect);
                 else if (req.accepts('application/json')) await res.json(data);
