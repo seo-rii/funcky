@@ -31,8 +31,11 @@ export default function (config: any, ...f: Handler[]): express.RequestHandler {
             } catch (e) {
                 error(e);
                 res.status(500);
-                if (req.accepts('application/json')) await res.json({error: e.message, code: 500});
-                else if (config.bson && req.accepts('application/bson')) {
+                if (config.binary) {
+                    res.set('Content-Type', 'application/bson');
+                    await res.send(BSON.serialize({error: e.message, code: 500}));
+                } else if (req.accepts('application/json')) await res.json({error: e.message, code: 500});
+                else if (req.accepts('application/bson')) {
                     res.set('Content-Type', 'application/bson');
                     await res.send(BSON.serialize({error: e.message, code: 500}));
                 } else res.send('Unsupported media type');
