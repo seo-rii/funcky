@@ -19,8 +19,11 @@ export default function (config: any, ...f: Handler[]): express.RequestHandler {
                 }
                 if ((data as ResponseError<any>).error) res.status((data as ResponseError<any>).code || 500);
                 if ((data as ResponseRedirect).redirect) res.redirect((data as ResponseRedirect).redirect);
-                else if (req.accepts('application/json')) await res.json(data);
-                else if (config.bson && req.accepts('application/bson')) {
+                else if (config.binary) {
+                    res.set('Content-Type', 'application/bson');
+                    await res.send(BSON.serialize(<any>data));
+                } else if (req.accepts('application/json')) await res.json(data);
+                else if (req.accepts('application/bson')) {
                     res.set('Content-Type', 'application/bson');
                     await res.send(BSON.serialize(<any>data));
                 } else res.send('Unsupported media type');
