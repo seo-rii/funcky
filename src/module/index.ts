@@ -1,4 +1,4 @@
-import './util/env'
+import './util/env.js'
 import App from "./app.js";
 import _log from "./util/log.js";
 import _router from "./express/router.js";
