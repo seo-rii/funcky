@@ -2,6 +2,7 @@ import * as childProcess from 'child_process';
 import * as fs from "fs";
 import * as path from "path";
 import * as esbuild from 'esbuild';
+import * as dotenv from "dotenv";
 import argParser from 'args-parser';
 
 const args = argParser(process.argv);
@@ -65,7 +66,9 @@ const opt: any = {
     format: 'esm',
 };
 
-if (!args.dev) esbuild.build(opt).then(result => {
+if (args.config) {
+    console.log(JSON.stringify(dotenv.config({path: process.env['env-path'], override: false}).parsed));
+} else if (!args.dev) esbuild.build(opt).then(result => {
     if (result.errors.length) {
         console.error('⚠ Build failed. See errors above.');
         for (const error of result.errors) {
