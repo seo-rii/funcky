@@ -67,7 +67,18 @@ const opt: any = {
 };
 
 if (args.config) {
-    console.log(JSON.stringify(dotenv.config({path: process.env['env-path'], override: false}).parsed));
+    console.log(JSON.stringify(dotenv.config({
+        path: process.env['env-path'],
+        override: false
+    }).parsed).replace(/\\n/g, "\\n")
+        .replace(/\\'/g, "\\'")
+        .replace(/\\"/g, '\\"')
+        .replace(/\\&/g, "\\&")
+        .replace(/\\r/g, "\\r")
+        .replace(/\\t/g, "\\t")
+        .replace(/\\b/g, "\\b")
+        .replace(/\\f/g, "\\f"))
+
 } else if (!args.dev) esbuild.build(opt).then(result => {
     if (result.errors.length) {
         console.error('⚠ Build failed. See errors above.');
