@@ -55,7 +55,7 @@ const config = JSON.stringify({
 });
 
 const opt: any = {
-    entryPoints: [path.join(process.cwd(), args.entry)],
+    entryPoints: [path.join(process.cwd(), args.entry || 'src/index.ts')],
     outfile: path.join(process.cwd(), args.dist || 'build/index.mjs'),
     bundle: true,
     plugins: args.dev ? [runServerPlugin, makeAllPackagesExternalPlugin] : [makeAllPackagesExternalPlugin],
