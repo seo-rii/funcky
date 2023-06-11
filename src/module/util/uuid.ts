@@ -1,7 +1,7 @@
 import {v4 as uuidv4} from 'uuid';
 import short from 'short-uuid';
 
-const base = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&'()*+-.:<=>?@[]^`{|}~";
+const base = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%'()*+-.:<=>@[]^`{|}~";
 const tr = short(base);
 
 type Uuid = typeof uuidv4 & { short: () => string, encode: (string) => string, decode: (string) => string };
