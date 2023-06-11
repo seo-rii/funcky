@@ -3,7 +3,6 @@ import * as fs from "fs";
 import * as path from "path";
 import * as esbuild from 'esbuild';
 import * as dotenv from "dotenv";
-import clipboardy from 'clipboardy';
 import argParser from 'args-parser';
 
 const args = argParser(process.argv);
@@ -68,12 +67,14 @@ const opt: any = {
 };
 
 if (args.config) {
-    const res = JSON.stringify(dotenv.config({
-        path: process.env["env-path"],
-        override: false
-    }).parsed);
-    console.log(res);
-    clipboardy.writeSync(res);
+    import('clipboardy').then(clipboardy => {
+        const res = JSON.stringify(dotenv.config({
+            path: process.env["env-path"],
+            override: false
+        }).parsed);
+        console.log(res);
+        clipboardy.default.writeSync(res);
+    });
 } else if (!args.dev) esbuild.build(opt).then(result => {
     if (result.errors.length) {
         console.error('⚠ Build failed. See errors above.');
