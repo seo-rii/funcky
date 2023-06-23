@@ -20,8 +20,8 @@ export default function (app: express.Application, config: any) {
             }
         }
     }))
-    app.use(express.raw({limit: '10mb'}))
-    app.use(express.json({limit: "10mb"}));
+    app.use(express.raw({limit: '10mb', type: config.binary ? (req) => true : 'application/bson'}));
+    app.use(express.json({limit: "10mb", type: config.binary ? null : (req) => true}));
     app.use(express.urlencoded({limit: "10mb", extended: true}));
     app.use((error, req, res, next) => res.status(500).send({error: error.message, code: 500}));
     app.use(cookieParser());
