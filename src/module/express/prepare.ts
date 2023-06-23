@@ -20,15 +20,17 @@ export default function (app: express.Application, config: any) {
             }
         }
     }))
-    app.use(express.raw({type: 'application/bson', limit: '10mb'}))
+    app.use(express.raw({limit: '10mb'}))
     app.use(express.json({limit: "10mb"}));
     app.use(express.urlencoded({limit: "10mb", extended: true}));
     app.use((error, req, res, next) => res.status(500).send({error: error.message, code: 500}));
     app.use(cookieParser());
     app.use(compression({filter: () => true}));
     app.use((req, res, next) => {
-        if (Buffer.isBuffer(req.body)) {
-            req.body = BSON.deserialize(req.body);
+        try {
+            if (Buffer.isBuffer(req.body)) req.body = BSON.deserialize(req.body);
+        } catch (e) {
+            delete req.body;
         }
         next();
     });

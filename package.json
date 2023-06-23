@@ -1,6 +1,6 @@
 {
   "name": "funcky",
-  "version": "0.3.25",
+  "version": "0.3.26",
   "description": "Functional programming with express",
   "main": "build/module/index.js",
   "types": "build/module/index.d.ts",
