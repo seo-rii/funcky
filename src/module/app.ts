@@ -1,7 +1,10 @@
 import express, {type Application} from 'express';
 import ws, {type Instance} from 'express-ws';
 import prepare from "./express/prepare.js";
-import handler, {acl, generator, justRun} from "./express/handler.js";
+import handler from "./express/handler/index.js";
+import generator from "./express/handler/generator.js";
+import acl from "./express/handler/acl.js";
+import justRun from "./express/handler/justRun.js";
 import _funcky from './config.js'
 import log from "./util/log.js";
 import authRouter, {auth} from './util/jwt.js'

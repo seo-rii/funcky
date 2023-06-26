@@ -1,5 +1,8 @@
 import express, {type RouterOptions} from "express";
-import handler, {acl, generator, justRun} from "./handler.js";
+import handler from "./handler/index.js";
+import acl from "./handler/acl.js";
+import generator from "./handler/generator.js";
+import justRun from "./handler/justRun.js";
 import ws from 'express-ws';
 import type {ACLHandler, Handler, PostHandler, RouteCallback, Router, RouterConfig} from "../types/router.js";
 import {auth} from "../util/jwt.js";

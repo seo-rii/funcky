@@ -1,7 +1,7 @@
 import express from "express";
-import {error} from "../util/log.js";
-import type {ResponseError, ResponseSuccess, ResponseRedirect} from "../types/response.js";
-import type {ACLHandler, Handler, PostHandler, Request} from "../types/router.js";
+import {error} from "../../util/log.js";
+import type {ResponseError, ResponseSuccess, ResponseRedirect} from "../../types/response.js";
+import type {ACLHandler, Handler, PostHandler, Request} from "../../types/router.js";
 import {BSON} from 'bson';
 
 export default function (config: any, ...f: Handler[]): express.RequestHandler {
@@ -43,37 +43,4 @@ export default function (config: any, ...f: Handler[]): express.RequestHandler {
             }
         }
     };
-}
-
-export function justRun(f: PostHandler, g: Handler): Handler {
-    if (!f) f = async (ctx) => ctx;
-    return async (req, res, next) => f(await g(req, res, next), req, res, next)
-}
-
-export function acl(aclChecker?: ACLHandler, handler?: Handler, checkDefault = true): Handler {
-    if (aclChecker === false) return null;
-    if (!aclChecker && !checkDefault) return null;
-    return async (req, res, next) => {
-        const data = await handler?.(req, res, next);
-        if (data === true) return true;
-        if ((<ResponseSuccess<any>>data)?.owner === req.auth?.id) return data;
-        return aclChecker ? await aclChecker(req, data) : false;
-    }
-}
-
-export function generator(f: Handler | express.RequestHandler, h: (f: Handler) => express.RequestHandler = x => x): express.RequestHandler {
-    return (req, res, next) => {
-        let data = undefined;
-        const g = async (req, res, next) => {
-            if (data !== undefined) return data;
-            data = await f(req, res, next);
-            return data;
-        }
-        g.refresh = async () => {
-            data = undefined;
-            return false;
-        }
-
-        h(g)(req, res, next);
-    }
 }
