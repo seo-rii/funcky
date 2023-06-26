@@ -4,8 +4,17 @@ import acl from "./handler/acl.js";
 import generator from "./handler/generator.js";
 import justRun from "./handler/justRun.js";
 import ws from 'express-ws';
-import type {ACLHandler, Handler, PostHandler, RouteCallback, Router, RouterConfig} from "../types/router.js";
+import type {
+    ACLHandler,
+    Handler,
+    PostHandler,
+    RouteCallback,
+    Router,
+    RouterConfig,
+    SSEHandler
+} from "../types/router.js";
 import {auth} from "../util/jwt.js";
+import sse from "./handler/sse.js";
 
 export default function Router<T = {}>(cb?: (data: RouterConfig<T>) => any, options?: RouterOptions, _auth?: any, _acl?: ACLHandler): Router {
     return async (wsInstance: ws.Instance, config: any) => {
@@ -32,6 +41,13 @@ export default function Router<T = {}>(cb?: (data: RouterConfig<T>) => any, opti
 
             ir: async <U = {}>(path: string, f: (data: RouterConfig<T & U>) => any, options?: RouterOptions, _auth?: any, _acl?: ACLHandler) => {
                 router.use(path, await (await Router(f, options, _auth, _acl))(wsInstance, config));
+            },
+
+            sse: (path: string, f: SSEHandler, {
+                auth: __auth,
+                acl: __acl
+            }: { auth?: any, acl?: ACLHandler } = {}) => {
+                router.get(path, generator(sse(f), g => handler(config, auth(!!(_auth || __auth)), acl(_acl, g), acl(__acl, g), auth(_auth), auth(__auth))));
             }
         }
 

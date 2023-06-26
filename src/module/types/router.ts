@@ -13,6 +13,7 @@ export type HandlerRegistrator<T = {}> = (path: string, handler: Handler<T>, opt
 export type ACLHandler = ((req: Request, data: any) => Promise<boolean>) | false
 export type RouterHandler<T = {}> = (req: Request<T>, res?: express.Response, next?: express.NextFunction) => any
 export type Router = (wsInstance: ws.Instance | null, config: any) => Promise<express.Router>
+export type SSEHandler<T = any> = (req: Request<T>) => (Generator<any, any, void> | AsyncGenerator<any, any, void>);
 
 export interface RouteCallback<T = {}> {
     get: HandlerRegistrator<T>,
@@ -26,6 +27,7 @@ export interface RouteCallback<T = {}> {
     ws: ws.WebsocketMethod<any>,
     r: (path: string, f: Router) => Promise<any>,
     ir: <U = {}>(path: string, f: (data: RouterConfig<T & U>) => any, options?: RouterOptions, _auth?: any, _acl?: ACLHandler) => Promise<any>,
+    sse: (path: string, f: SSEHandler) => any,
 }
 
 export interface RouterConfig<T = {}> extends RouteCallback<T> {

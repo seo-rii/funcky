@@ -8,7 +8,8 @@ import justRun from "./express/handler/justRun.js";
 import _funcky from './config.js'
 import log from "./util/log.js";
 import authRouter, {auth} from './util/jwt.js'
-import {ACLHandler, Handler, PostHandler, RouteCallback, Router} from "./types/router.js";
+import {ACLHandler, Handler, PostHandler, RouteCallback, Router, SSEHandler} from "./types/router.js";
+import sse from "./express/handler/sse.js";
 
 interface AppConfig extends RouteCallback {
     app: Application
@@ -43,6 +44,12 @@ export default function ({port, name, cb, config}: {
                         post: _post
                     }: { auth?: any, acl?: ACLHandler, post?: PostHandler } = {}) => {
                         app[method](path, generator(f, g => handler(config, auth(!!(_auth)), acl(_acl, g), auth(_auth), justRun(_post, g))));
+                    },
+                    sse: (path: string, f: SSEHandler, {
+                        auth: _auth,
+                        acl: _acl
+                    }: { auth?: any, acl?: ACLHandler } = {}) => {
+                        app.get(path, <any>generator(sse(f), g => handler(config, auth(!!(_auth)), acl(_acl, g), auth(_auth))));
                     }
                 };
             }, {}));
