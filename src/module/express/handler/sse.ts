@@ -16,7 +16,9 @@ export default function (handler: SSEHandler): Handler {
                 try {
                     const {value, done} = await r.next();
                     if (done) break;
-                    res.write(`data: ${JSON.stringify(value)}\n\n`);
+                    res.write(`data: ${typeof value === 'string' ? value : JSON.stringify(value)}\n\n`);
+                    //@ts-ignore
+                    res.flush();
                 } catch (e) {
                     res.write(`event: error\ndata: ${JSON.stringify(e.message)}\n\n`);
                     break;
