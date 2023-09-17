@@ -4,6 +4,7 @@ import * as path from "path";
 import * as esbuild from 'esbuild';
 import * as dotenv from "dotenv";
 import argParser from 'args-parser';
+import esbuildPluginTsc from 'esbuild-plugin-tsc';
 
 const args = argParser(process.argv);
 const packageJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
@@ -55,11 +56,12 @@ const config = JSON.stringify({
     'dev': args.dev,
 });
 
+const tscOpt = args.tsc ? [esbuildPluginTsc({force: true})] : []
 const opt: any = {
     entryPoints: [path.join(process.cwd(), args.entry || 'src/index.ts')],
     outfile: path.join(process.cwd(), args.dist || 'build/index.mjs'),
     bundle: true,
-    plugins: args.dev ? [runServerPlugin, makeAllPackagesExternalPlugin] : [makeAllPackagesExternalPlugin],
+    plugins: args.dev ? [runServerPlugin, makeAllPackagesExternalPlugin, ...tscOpt] : [makeAllPackagesExternalPlugin, ...tscOpt],
     platform: 'node',
     define: {config},
     tsconfig: path.join(process.cwd(), 'tsconfig.json'),
