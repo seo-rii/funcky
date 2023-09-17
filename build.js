@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as esbuild from 'esbuild';
 import argParser from 'args-parser';
+import esbuildPluginTsc from 'esbuild-plugin-tsc';
 
 const args = argParser(process.argv);
 const packageJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
@@ -64,7 +65,7 @@ esbuild.build({
     entryPoints: ['./src/runner.ts'],
     outfile: 'build/runner.js',
     bundle: true,
-    plugins: [makeAllPackagesExternalPlugin],
+    plugins: [makeAllPackagesExternalPlugin, esbuildPluginTsc()],
     platform: 'node',
     format: 'esm',
 }).then(() => {
